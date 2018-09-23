@@ -17,7 +17,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
     private final List<Nota> notas;
     private final Context context;
-    private int qtdViewHolder = 0;
+    //private int qtdViewHolder = 0;
 
     public ListaNotasAdapter(Context context, List<Nota> notas){
         this.context = context;
@@ -26,9 +26,9 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
     @Override
     public ListaNotasAdapter.NotaViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-        qtdViewHolder++;
+        //qtdViewHolder++;
         View viewCriada = LayoutInflater.from(context).inflate(R.layout.item_nota, parent, false);
-        Log.i("recycerview", "qtd viewholder " + qtdViewHolder);
+        //Log.i("recycerview", "qtd viewholder " + qtdViewHolder);
         return new NotaViewHolder(viewCriada);
     }
 
