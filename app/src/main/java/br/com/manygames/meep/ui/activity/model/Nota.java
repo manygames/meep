@@ -1,6 +1,8 @@
 package br.com.manygames.meep.ui.activity.model;
 
-public class Nota {
+import java.io.Serializable;
+
+public class Nota implements Serializable {
 
     private final String titulo;
     private final String descricao;
