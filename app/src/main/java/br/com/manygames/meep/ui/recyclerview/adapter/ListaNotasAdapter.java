@@ -2,7 +2,6 @@ package br.com.manygames.meep.ui.recyclerview.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,13 @@ import java.util.List;
 
 import br.com.manygames.meep.R;
 import br.com.manygames.meep.ui.activity.model.Nota;
+import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.NotaViewHolder> {
 
     private final List<Nota> notas;
     private final Context context;
+    private OnItemClickListener onItemClickListener;
     //private int qtdViewHolder = 0;
 
     public ListaNotasAdapter(Context context, List<Nota> notas){
@@ -48,18 +49,36 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
         notifyDataSetChanged();
     }
 
+    public void altera(int posicao, Nota nota) {
+        notas.set(posicao, nota);
+        notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+
     class NotaViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView titulo;
         private final TextView descricao;
+        private Nota nota;
 
         public NotaViewHolder(View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.item_nota_titulo);
             descricao = itemView.findViewById(R.id.item_nota_descricao);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onItemClick(nota, getAdapterPosition());
+                }
+            });
         }
 
         public void vincula(Nota nota) {
+            this.nota = nota;
             preencheCampos(nota);
         }
 
