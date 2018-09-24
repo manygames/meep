@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import br.com.manygames.meep.R;
@@ -17,6 +16,8 @@ import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_POS
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
 
 public class FormularioNotaActivity extends AppCompatActivity {
+    public static final String TITULO_APPBAR_INSERE = "Insere Nota";
+    public static final String TITULO_APPBAR_ALTERA = "Altera Nota";
     private int posicaoRecebida = POSICAO_INVALIDA;
     private TextView titulo;
     private TextView descricao;
@@ -24,10 +25,12 @@ public class FormularioNotaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(TITULO_APPBAR_INSERE);
         setContentView(R.layout.activity_formulario_nota);
         inicializaCampos();
         Intent dadosRecebidos = getIntent();
         if(dadosRecebidos.hasExtra(CHAVE_NOTA)) {
+            setTitle(TITULO_APPBAR_ALTERA);
             Nota nota = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
             posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
             preencheCampos(nota);

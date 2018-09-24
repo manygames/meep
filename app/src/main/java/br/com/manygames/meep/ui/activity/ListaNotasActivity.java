@@ -26,11 +26,13 @@ import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CODIGO_RE
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
 
 public class ListaNotasActivity extends AppCompatActivity {
+    public static final String TITULO_APPBAR = "Notas";
     private ListaNotasAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(TITULO_APPBAR);
 
         setContentView(R.layout.activity_lista_notas);
         List<Nota> todasNotas = pegaTodasNotas();
@@ -55,10 +57,6 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private List<Nota> pegaTodasNotas() {
         NotaDAO dao = new NotaDAO();
-        for (int i = 0; i < 10; i++) {
-            Nota nota = new Nota("Titulo " + i, "Descricao " + i);
-            dao.insere(nota);
-        }
         return dao.todos();
     }
 
@@ -113,7 +111,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private boolean temNota(Intent data) {
-        return data.hasExtra(CHAVE_NOTA);
+        return data!= null && data.hasExtra(CHAVE_NOTA);
     }
 
     private boolean resultadoOk(int resultCode) {
@@ -127,10 +125,14 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraRecyclerView(List<Nota> todasNotas) {
         RecyclerView listaNotas = findViewById(R.id.lista_notas_recycler_view);
         configuraAdapter(todasNotas, listaNotas);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback());
-        itemTouchHelper.attachToRecyclerView(listaNotas);
+        configuraItemTouchHelper(listaNotas);
         //Não é necessário porque foi definido no XML
         //configuraLayoutManager(listaN7otas);
+    }
+
+    private void configuraItemTouchHelper(RecyclerView listaNotas) {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(listaNotas);
     }
 
 //    private void configuraLayoutManager(RecyclerView listaNotas) {
