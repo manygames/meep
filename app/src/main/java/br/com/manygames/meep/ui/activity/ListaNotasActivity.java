@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,9 @@ import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_I
 public class ListaNotasActivity extends AppCompatActivity {
     public static final String TITULO_APPBAR = "Notas";
     private ListaNotasAdapter adapter;
+    private RecyclerView listaNotas;
+    private RecyclerView.LayoutManager layoutManager;
+    private int layoutAtual = R.id.menu_lista_notas_para_linear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,11 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_lista_notas);
         List<Nota> todasNotas = pegaTodasNotas();
+        todasNotas.add(new Nota("1","2"));
+        todasNotas.add(new Nota("3","4"));
+        todasNotas.add(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
+        todasNotas.add(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
+        todasNotas.add(new Nota("10","11"));
         configuraRecyclerView(todasNotas);
         configuraInsereNota();
     }
@@ -111,7 +123,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private boolean temNota(Intent data) {
-        return data!= null && data.hasExtra(CHAVE_NOTA);
+        return data != null && data.hasExtra(CHAVE_NOTA);
     }
 
     private boolean resultadoOk(int resultCode) {
@@ -123,11 +135,11 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private void configuraRecyclerView(List<Nota> todasNotas) {
-        RecyclerView listaNotas = findViewById(R.id.lista_notas_recycler_view);
+        listaNotas = findViewById(R.id.lista_notas_recycler_view);
         configuraAdapter(todasNotas, listaNotas);
         configuraItemTouchHelper(listaNotas);
         //Não é necessário porque foi definido no XML
-        //configuraLayoutManager(listaN7otas);
+        configuraLayoutManager();
     }
 
     private void configuraItemTouchHelper(RecyclerView listaNotas) {
@@ -135,10 +147,18 @@ public class ListaNotasActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(listaNotas);
     }
 
-//    private void configuraLayoutManager(RecyclerView listaNotas) {
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        listaNotas.setLayoutManager(layoutManager);
-//    }
+    private void configuraLayoutManager() {
+        switch (layoutAtual) {
+            case R.id.menu_lista_notas_para_linear:
+                layoutManager = new LinearLayoutManager(this);
+                break;
+            case R.id.menu_lista_notas_para_staggeredgrid:
+                layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                break;
+        }
+        listaNotas.setLayoutManager(layoutManager);
+        adapter.trocaLayout(0, adapter.quantidadeNotas() - 1);
+    }
 
     private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
         adapter = new ListaNotasAdapter(this, todasNotas);
@@ -156,5 +176,40 @@ public class ListaNotasActivity extends AppCompatActivity {
         editaFormulario.putExtra(CHAVE_NOTA, nota);
         editaFormulario.putExtra(CHAVE_POSICAO, posicao);
         startActivityForResult(editaFormulario, CODIGO_REQUISICAO_ALTERA_NOTA);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_lista_notas_muda_layout, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        invalidateOptionsMenu();
+        trocaLayoutPara(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void trocaLayoutPara(MenuItem item) {
+        layoutAtual = item.getItemId();
+        configuraLayoutManager();
+    }
+
+    private boolean ehTrocaParaLinear(MenuItem item) {
+        return R.id.menu_lista_notas_para_linear == item.getItemId();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switch (layoutAtual){
+            case R.id.menu_lista_notas_para_linear:
+                menu.findItem(R.id.menu_lista_notas_para_linear).setVisible(false);
+                break;
+            case R.id.menu_lista_notas_para_staggeredgrid:
+                menu.findItem(R.id.menu_lista_notas_para_staggeredgrid).setVisible(false);
+                break;
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 }

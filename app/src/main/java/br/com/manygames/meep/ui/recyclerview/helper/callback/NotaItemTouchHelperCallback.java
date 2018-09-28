@@ -45,4 +45,6 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
         new NotaDAO().remove(posicao);
         adapter.remove(posicao);
     }
+
+
 }

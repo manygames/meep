@@ -26,6 +26,10 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
         this.notas = notas;
     }
 
+    public int quantidadeNotas(){
+        return notas.size();
+    }
+
     @Override
     public ListaNotasAdapter.NotaViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
         //qtdViewHolder++;
@@ -67,6 +71,10 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     public void troca(int posicaoInicial, int posicaoFinal) {
         Collections.swap(notas, posicaoInicial, posicaoFinal);
         notifyItemMoved(posicaoInicial, posicaoFinal);
+    }
+
+    public void trocaLayout(int inicio, int fim){
+        notifyItemMoved(inicio, fim);
     }
 
 
