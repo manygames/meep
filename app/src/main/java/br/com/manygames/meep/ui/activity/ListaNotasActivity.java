@@ -17,12 +17,16 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.manygames.meep.R;
+import br.com.manygames.meep.preferences.Layouts;
+import br.com.manygames.meep.preferences.NotasPreferences;
 import br.com.manygames.meep.ui.activity.dao.NotaDAO;
 import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
 import br.com.manygames.meep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
 
+import static br.com.manygames.meep.preferences.Layouts.*;
+import static br.com.manygames.meep.preferences.Layouts.LINEAR;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
@@ -34,12 +38,15 @@ public class ListaNotasActivity extends AppCompatActivity {
     private ListaNotasAdapter adapter;
     private RecyclerView listaNotas;
     private RecyclerView.LayoutManager layoutManager;
-    private int layoutAtual = R.id.menu_lista_notas_para_linear;
+    private Layouts layoutAtual = LINEAR;
+    private NotasPreferences preferences;
+    private Layouts proximoLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(TITULO_APPBAR);
+        preferences = new NotasPreferences(this);
 
         setContentView(R.layout.activity_lista_notas);
         List<Nota> todasNotas = pegaTodasNotas();
@@ -139,25 +146,11 @@ public class ListaNotasActivity extends AppCompatActivity {
         configuraAdapter(todasNotas, listaNotas);
         configuraItemTouchHelper(listaNotas);
         //Não é necessário porque foi definido no XML
-        configuraLayoutManager();
     }
 
     private void configuraItemTouchHelper(RecyclerView listaNotas) {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
         itemTouchHelper.attachToRecyclerView(listaNotas);
-    }
-
-    private void configuraLayoutManager() {
-        switch (layoutAtual) {
-            case R.id.menu_lista_notas_para_linear:
-                layoutManager = new LinearLayoutManager(this);
-                break;
-            case R.id.menu_lista_notas_para_staggeredgrid:
-                layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                break;
-        }
-        listaNotas.setLayoutManager(layoutManager);
-        adapter.trocaLayout(0, adapter.quantidadeNotas() - 1);
     }
 
     private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
@@ -184,32 +177,58 @@ public class ListaNotasActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void configuraLayoutManager() {
+        listaNotas.setLayoutManager(layoutManager);
+        adapter.trocaLayout(0, adapter.quantidadeNotas() - 1);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        invalidateOptionsMenu();
-        trocaLayoutPara(item);
+        trocaLayout(item);
+        configuraLayoutManager();
         return super.onOptionsItemSelected(item);
     }
 
-    private void trocaLayoutPara(MenuItem item) {
-        layoutAtual = item.getItemId();
-        configuraLayoutManager();
-    }
-
-    private boolean ehTrocaParaLinear(MenuItem item) {
-        return R.id.menu_lista_notas_para_linear == item.getItemId();
+    private void trocaLayout(MenuItem item) {
+        switch (layoutAtual) {
+            case LINEAR:
+                item.setIcon(R.drawable.ic_action_botao_alterna_linear);
+                layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                layoutAtual = STAGGEREDGRID;
+                break;
+            case STAGGEREDGRID:
+                item.setIcon(R.drawable.ic_action_botao_alterna_staggeredgrid);
+                layoutManager = new LinearLayoutManager(this);
+                layoutAtual = LINEAR;
+                break;
+        }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        switch (layoutAtual){
-            case R.id.menu_lista_notas_para_linear:
-                menu.findItem(R.id.menu_lista_notas_para_linear).setVisible(false);
+        carregaUltimoLayoutSalvo(menu);
+        configuraLayoutManager();
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void carregaUltimoLayoutSalvo(Menu menu) {
+        layoutAtual = getEnum(preferences.pegaLayout() - 1);
+        MenuItem item = menu.findItem(R.id.menu_lista_notas_layouts);
+        switch (layoutAtual) {
+            case LINEAR:
+                item.setIcon(R.drawable.ic_action_botao_alterna_staggeredgrid);
+                layoutManager = new LinearLayoutManager(this);
                 break;
-            case R.id.menu_lista_notas_para_staggeredgrid:
-                menu.findItem(R.id.menu_lista_notas_para_staggeredgrid).setVisible(false);
+            case STAGGEREDGRID:
+                item.setIcon(R.drawable.ic_action_botao_alterna_linear);
+                layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 break;
         }
-        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        preferences.salvaLayout(layoutAtual);
+        super.onDestroy();
     }
 }
