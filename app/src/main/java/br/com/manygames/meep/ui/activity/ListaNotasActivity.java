@@ -50,11 +50,17 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_lista_notas);
         List<Nota> todasNotas = pegaTodasNotas();
-        todasNotas.add(new Nota("1","2"));
+/*        todasNotas.add(new Nota("1","2"));
         todasNotas.add(new Nota("3","4"));
         todasNotas.add(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
         todasNotas.add(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
         todasNotas.add(new Nota("10","11"));
+        NotaDAO dao = new NotaDAO();
+        dao.insere(new Nota("1","2"));
+        dao.insere(new Nota("3","4"));
+        dao.insere(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
+        dao.insere(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
+        dao.insere(new Nota("10","11"));*/
         configuraRecyclerView(todasNotas);
         configuraInsereNota();
     }

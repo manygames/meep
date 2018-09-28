@@ -26,11 +26,11 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         int posicaoFinal = target.getAdapterPosition();
         int posicaoInicial = viewHolder.getAdapterPosition();
-        trocaNotas(posicaoFinal, posicaoInicial);
+        trocaNotas(posicaoInicial, posicaoFinal);
         return true;
     }
 
-    private void trocaNotas(int posicaoFinal, int posicaoInicial) {
+    private void trocaNotas(int posicaoInicial, int posicaoFinal) {
         new NotaDAO().troca(posicaoInicial, posicaoFinal);
         adapter.troca(posicaoInicial, posicaoFinal);
     }
@@ -45,6 +45,4 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
         new NotaDAO().remove(posicao);
         adapter.remove(posicao);
     }
-
-
 }
