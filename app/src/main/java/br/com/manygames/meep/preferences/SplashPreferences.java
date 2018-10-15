@@ -3,12 +3,12 @@ package br.com.manygames.meep.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class NotasPreferences {
-    public static final String LAYOUT_ATUAL = "layoutAtual";
+public class SplashPreferences {
+
     public static final String PRIMEIRO_ACESSO = "ehPrimeiroAcesso";
     private Context context;
 
-    public NotasPreferences(Context context){
+    public SplashPreferences(Context context){
         this.context = context;
     }
 
@@ -16,15 +16,15 @@ public class NotasPreferences {
         return context.getSharedPreferences("br.com.manygames.meep.preferences.NotasPreferences", context.MODE_PRIVATE);
     }
 
-    public void salvaLayout(Layouts layoutAtual){
-        SharedPreferences preferences = getSharedPreferences();
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(LAYOUT_ATUAL, layoutAtual.id());
+    public void salvaPrimeiroAcesso(){
+        SharedPreferences prefs = getSharedPreferences();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(PRIMEIRO_ACESSO, false);
         editor.commit();
     }
 
-    public int pegaLayout(){
+    public boolean ehPrimeiroAcesso(){
         SharedPreferences preferences = getSharedPreferences();
-        return preferences.getInt(LAYOUT_ATUAL, Layouts.LINEAR.id());
+        return preferences.getBoolean(PRIMEIRO_ACESSO, true);
     }
 }
