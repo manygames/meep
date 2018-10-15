@@ -2,6 +2,7 @@ package br.com.manygames.meep.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,17 +51,21 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_lista_notas);
         List<Nota> todasNotas = pegaTodasNotas();
-/*        todasNotas.add(new Nota("1","2"));
-        todasNotas.add(new Nota("3","4"));
-        todasNotas.add(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
-        todasNotas.add(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
-        todasNotas.add(new Nota("10","11"));
+        todasNotas.add(new Nota("1","2", Color.WHITE));
+        todasNotas.add(new Nota("2","3", Color.WHITE));
+        todasNotas.add(new Nota("4","5", Color.WHITE));
+//        todasNotas.add(new Nota("3","4"));
+//        todasNotas.add(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
+//        todasNotas.add(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
+//        todasNotas.add(new Nota("10","11"));
         NotaDAO dao = new NotaDAO();
-        dao.insere(new Nota("1","2"));
-        dao.insere(new Nota("3","4"));
-        dao.insere(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
-        dao.insere(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
-        dao.insere(new Nota("10","11"));*/
+        dao.insere(new Nota("1","2", Color.WHITE));
+        dao.insere(new Nota("2","3", Color.WHITE));
+        dao.insere(new Nota("4","5", Color.WHITE));
+//        dao.insere(new Nota("3","4"));
+//        dao.insere(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
+//        dao.insere(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
+//        dao.insere(new Nota("10","11"));
         configuraRecyclerView(todasNotas);
         configuraInsereNota();
     }
@@ -91,6 +96,7 @@ public class ListaNotasActivity extends AppCompatActivity {
         if (ehUmResultadoInsereNota(requestCode, data)) {
             if (resultadoOk(resultCode)) {
                 Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                //Toast.makeText(this, notaRecebida.getCor(), Toast.LENGTH_LONG).show();
                 adiciona(notaRecebida);
             }
         }
@@ -100,6 +106,7 @@ public class ListaNotasActivity extends AppCompatActivity {
                 Nota notaAlterada = (Nota) data.getSerializableExtra(CHAVE_NOTA);
                 int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
                 if (ehPosicaoValida(posicaoRecebida)) {
+                    //Toast.makeText(this, "" + notaAlterada.getCor(), Toast.LENGTH_LONG).show();
                     altera(notaAlterada, posicaoRecebida);
                 } else {
                     Toast.makeText(this, "Ocorreu um problema na alteração da nota", Toast.LENGTH_LONG).show();

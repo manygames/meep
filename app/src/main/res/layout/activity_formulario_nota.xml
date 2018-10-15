@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/formulario_nota_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -33,5 +34,19 @@
         app:layout_constraintStart_toStartOf="@id/formulario_nota_titulo"
         app:layout_constraintTop_toBottomOf="@id/formulario_nota_titulo"
         android:inputType="text" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/formulario_nota_lista_cores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eeeeee"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_cor">
+
+    </android.support.v7.widget.RecyclerView>
+
+
 
 </android.support.constraint.ConstraintLayout>

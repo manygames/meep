@@ -1,6 +1,7 @@
 package br.com.manygames.meep.ui.recyclerview.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,6 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     private final List<Nota> notas;
     private final Context context;
     private OnItemClickListener onItemClickListener;
-    //private int qtdViewHolder = 0;
 
     public ListaNotasAdapter(Context context, List<Nota> notas){
         this.context = context;
@@ -31,10 +31,8 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     }
 
     @Override
-    public ListaNotasAdapter.NotaViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-        //qtdViewHolder++;
+    public ListaNotasAdapter.NotaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewCriada = LayoutInflater.from(context).inflate(R.layout.item_nota, parent, false);
-        //Log.i("recycerview", "qtd viewholder " + qtdViewHolder);
         return new NotaViewHolder(viewCriada);
     }
 
@@ -82,28 +80,33 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
         private final TextView titulo;
         private final TextView descricao;
+        private final CardView cardView;
         private Nota nota;
+
+
+        public void vincula(Nota nota) {
+            this.nota = nota;
+            preencheCampos();
+        }
+
+        private void preencheCampos() {
+            titulo.setText(nota.getTitulo());
+            descricao.setText(nota.getDescricao());
+            cardView.setCardBackgroundColor(nota.getCor());
+        }
 
         public NotaViewHolder(View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.item_nota_titulo);
             descricao = itemView.findViewById(R.id.item_nota_descricao);
+            cardView = itemView.findViewById(R.id.item_nota_card_view);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     onItemClickListener.onItemClick(nota, getAdapterPosition());
                 }
             });
-        }
-
-        public void vincula(Nota nota) {
-            this.nota = nota;
-            preencheCampos(nota);
-        }
-
-        private void preencheCampos(Nota nota) {
-            titulo.setText(nota.getTitulo());
-            descricao.setText(nota.getDescricao());
         }
     }
 }
