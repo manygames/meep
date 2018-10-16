@@ -13,23 +13,21 @@ import br.com.manygames.meep.ui.activity.model.Nota;
 @Dao
 public interface NotaDAO {
 
-    @Query("SELECT * FROM Nota")
+    @Query("SELECT * FROM Nota ORDER BY posicao")
     List<Nota> todas();
 
     @Insert
-    public long[] insere(Nota... notas);
+    long[] insere(Nota... notas);
 
     @Update
-    public void altera(Nota... notas);
+    void altera(Nota... notas);
 
     @Delete
-    public void remove(Nota... notas);
+    void remove(Nota... notas);
 
-    @Query("UPDATE Nota SET posicao = " +
-            "CASE " +
-                "WHEN posicao = :posicaoInicio THEN :posicaoFim " +
-                "WHEN posicao = :posicaoFim    THEN :posicaoInicio " +
-            "END " +
-            "WHERE posicao IN (:posicaoInicio, :posicaoFim)")
-    public void troca(int posicaoInicio, int posicaoFim);
+    @Query("UPDATE Nota SET posicao = posicao + 1")
+    void atualizaPosicoesAposInserir();
+
+    @Query("UPDATE Nota SET posicao = posicao - 1 WHERE posicao > :posicao")
+    void atualizaPosicoesAposRemover(int posicao);
 }

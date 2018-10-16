@@ -3,6 +3,7 @@ package br.com.manygames.meep.ui.recyclerview.adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     public void onBindViewHolder(ListaNotasAdapter.NotaViewHolder notaViewHolder, int position) {
         Nota nota = notas.get(position);
         //atribui posicao atual, pois ao remover uma nota as posições são alteradas. AS POSIÇÕES NÃO SÂO ESTÁTICAS!
-        nota.setPosicao(position);
+        //nota.setPosicao(position);
         notaViewHolder.vincula(nota);
     }
 
@@ -50,6 +51,13 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     }
 
     public void adiciona(Nota nota){
+        if(notas.size() != 0) {
+            for (Nota n :
+                    notas) {
+                n.setPosicao(n.getPosicao() + 1);
+            }
+        }
+
         notas.add(0, nota);
         notifyDataSetChanged();
     }
@@ -59,28 +67,44 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
     public void remove(int posicao) {
+        if(notas.size() != 0) {
+            for (Nota n :
+                    notas) {
+                if(n.getPosicao() > posicao)
+                    n.setPosicao(n.getPosicao() - 1);
+            }
+        }
         notas.remove(posicao);
         notifyItemRemoved(posicao);
-        //necessário para que o onBind seja chamado e as novas posições sejam atribuidas corretamente.
-        // sem esta chamada, as posicoes ficam mantidas após a remoção e em algum momento eu tomo um indexOutOfBounds
         notifyItemRangeChanged(posicao, notas.size());
     }
 
-    public void troca(int posicaoInicial, int posicaoFinal) {
-        Collections.swap(notas, posicaoInicial, posicaoFinal);
-        notifyItemMoved(posicaoInicial, posicaoFinal);
+    public Nota[] pegaNotas(){
+        return notas.toArray(new Nota[0]);
     }
 
     public Nota pegaNota(int posicao){
         return notas.get(posicao);
     }
 
-    public void trocaLayout(int inicio, int fim){
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void troca(int posicaoInicial, int posicaoFinal) {
+        Collections.swap(notas, posicaoInicial, posicaoFinal);
+
+        for (Nota nota:
+             notas) {
+            nota.setPosicao(notas.indexOf(nota));
+        }
+
+        notifyItemMoved(posicaoInicial, posicaoFinal);
+    }
+
+
+    public void notificaTrocaDeLayout(int inicio, int fim){
         notifyItemMoved(inicio, fim);
     }
 

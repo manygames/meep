@@ -1,18 +1,18 @@
 package br.com.manygames.meep.ui.activity;
 
 import android.app.Activity;
-import android.arch.persistence.room.Room;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +23,14 @@ import br.com.manygames.meep.preferences.Layouts;
 import br.com.manygames.meep.preferences.NotasPreferences;
 import br.com.manygames.meep.ui.activity.dao.NotaDAO;
 import br.com.manygames.meep.ui.activity.dao.NotaDatabase;
-import br.com.manygames.meep.ui.activity.dao.OldNotaDAO;
 import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
 import br.com.manygames.meep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
 
-import static br.com.manygames.meep.preferences.Layouts.*;
 import static br.com.manygames.meep.preferences.Layouts.LINEAR;
+import static br.com.manygames.meep.preferences.Layouts.STAGGEREDGRID;
+import static br.com.manygames.meep.preferences.Layouts.getEnum;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
@@ -86,7 +86,8 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private List<Nota> pegaTodasNotas() {
         NotaDAO dao = NotaDatabase.getNotaDatabase(this).notaDAO();
-        return dao.todas();
+        List<Nota> notas = dao.todas();
+        return notas;
     }
 
     @Override
@@ -117,6 +118,13 @@ public class ListaNotasActivity extends AppCompatActivity {
         adapter.altera(nota);
     }
 
+    private void adiciona(Nota notaRecebida) {
+        NotaDatabase.getNotaDatabase(this).notaDAO().atualizaPosicoesAposInserir();
+        long[] idsCriados = NotaDatabase.getNotaDatabase(this).notaDAO().insere(notaRecebida);
+        notaRecebida.setId(idsCriados[0]);
+        adapter.adiciona(notaRecebida);
+    }
+
     private boolean ehPosicaoValida(int posicaoRecebida) {
         return posicaoRecebida > POSICAO_INVALIDA;
     }
@@ -127,12 +135,6 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private boolean ehCodigoRequisicaoAlteraNota(int requestCode, int codigoRequisicaoAlteraNota) {
         return requestCode == codigoRequisicaoAlteraNota;
-    }
-
-    private void adiciona(Nota notaRecebida) {
-        long[] idsCriados = NotaDatabase.getNotaDatabase(this).notaDAO().insere(notaRecebida);
-        notaRecebida.setId(idsCriados[0]);
-        adapter.adiciona(notaRecebida);
     }
 
     private boolean ehUmResultadoInsereNota(int requestCode, Intent data) {
@@ -162,8 +164,16 @@ public class ListaNotasActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(listaNotas);
     }
 
-    private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
+    private void configuraAdapter(List<Nota> todasNotas, final RecyclerView listaNotas) {
         adapter = new ListaNotasAdapter(this, todasNotas);
+
+        listaNotas.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                //NotaDatabase.getNotaDatabase(ListaNotasActivity.this).notaDAO().altera(adapter.pegaNotas());
+            }
+        });
+
         listaNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -188,7 +198,7 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private void configuraLayoutManager() {
         listaNotas.setLayoutManager(layoutManager);
-        adapter.trocaLayout(0, adapter.quantidadeNotas() - 1);
+        adapter.notificaTrocaDeLayout(0, adapter.quantidadeNotas() - 1);
     }
 
     @Override
@@ -239,5 +249,23 @@ public class ListaNotasActivity extends AppCompatActivity {
     protected void onDestroy() {
         preferences.salvaLayout(layoutAtual);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        List<Nota> notasB = NotaDatabase.getNotaDatabase(this).notaDAO().todas();
+
+        for (Nota nota:
+                notasB) {
+            Log.d("Notas no banco", nota.getTitulo() + " - " + nota.getId() + " - " + nota.getPosicao());
+        }
+
+        Nota[] notas = adapter.pegaNotas();
+        for (Nota nota:
+                notas) {
+            Log.d("Notas no adapter", nota.getTitulo() + " - " + nota.getId() + " - " + nota.getPosicao());
+        }
     }
 }

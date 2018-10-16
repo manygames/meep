@@ -19,8 +19,6 @@ import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaCoresAdapter;
 
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
-import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
-import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
 
 public class FormularioNotaActivity extends AppCompatActivity {
     public static final String TITULO_APPBAR_INSERE = "Insere Nota";
@@ -82,7 +80,6 @@ public class FormularioNotaActivity extends AppCompatActivity {
         if(dadosRecebidos.hasExtra(CHAVE_NOTA)) {
             setTitle(TITULO_APPBAR_ALTERA);
             nota = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
-            //posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
         } else {
             nota = new Nota();
         }
