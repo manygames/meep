@@ -39,6 +39,8 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     @Override
     public void onBindViewHolder(ListaNotasAdapter.NotaViewHolder notaViewHolder, int position) {
         Nota nota = notas.get(position);
+        //atribui posicao atual, pois ao remover uma nota as posições são alteradas. AS POSIÇÕES NÃO SÂO ESTÁTICAS!
+        nota.setPosicao(position);
         notaViewHolder.vincula(nota);
     }
 
@@ -48,12 +50,12 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     }
 
     public void adiciona(Nota nota){
-        notas.add(nota);
+        notas.add(0, nota);
         notifyDataSetChanged();
     }
 
-    public void altera(int posicao, Nota nota) {
-        notas.set(posicao, nota);
+    public void altera(Nota nota) {
+        notas.set(nota.getPosicao(), nota);
         notifyDataSetChanged();
     }
 
@@ -64,11 +66,18 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     public void remove(int posicao) {
         notas.remove(posicao);
         notifyItemRemoved(posicao);
+        //necessário para que o onBind seja chamado e as novas posições sejam atribuidas corretamente.
+        // sem esta chamada, as posicoes ficam mantidas após a remoção e em algum momento eu tomo um indexOutOfBounds
+        notifyItemRangeChanged(posicao, notas.size());
     }
 
     public void troca(int posicaoInicial, int posicaoFinal) {
         Collections.swap(notas, posicaoInicial, posicaoFinal);
         notifyItemMoved(posicaoInicial, posicaoFinal);
+    }
+
+    public Nota pegaNota(int posicao){
+        return notas.get(posicao);
     }
 
     public void trocaLayout(int inicio, int fim){

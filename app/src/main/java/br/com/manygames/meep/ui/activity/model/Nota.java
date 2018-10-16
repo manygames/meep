@@ -1,12 +1,19 @@
 package br.com.manygames.meep.ui.activity.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity(tableName = "nota")
 public class Nota implements Serializable {
 
-    private final String titulo;
-    private final String descricao;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+    private String titulo;
+    private String descricao;
     private int cor;
+    private int posicao;
 
     public Nota(String titulo, String descricao, int cor) {
         this.titulo = titulo;
@@ -14,19 +21,50 @@ public class Nota implements Serializable {
         this.cor = cor;
     }
 
-    public Nota(){
+    public Nota() {
         this.titulo = "";
         this.descricao = "";
         this.cor = 0;
+        this.posicao = 0;
     }
 
-    public String getTitulo() { return titulo; }
+    public long getId() {
+        return id;
+    }
 
-    public String getDescricao() { return descricao; }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-    public int getCor() { return cor; }
+    public int getPosicao() {
+        return posicao;
+    }
+
+    public void setPosicao(int posicao) {
+        this.posicao = posicao;
+    }
+
+    public int getCor() {
+        return cor;
+    }
 
     public void setCor(int cor) {
         this.cor = cor;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 }

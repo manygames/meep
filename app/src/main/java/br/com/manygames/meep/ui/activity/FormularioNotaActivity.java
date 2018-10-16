@@ -25,7 +25,6 @@ import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_I
 public class FormularioNotaActivity extends AppCompatActivity {
     public static final String TITULO_APPBAR_INSERE = "Insere Nota";
     public static final String TITULO_APPBAR_ALTERA = "Altera Nota";
-    private int posicaoRecebida = POSICAO_INVALIDA;
     private TextView titulo;
     private TextView descricao;
     private Nota nota;
@@ -83,7 +82,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
         if(dadosRecebidos.hasExtra(CHAVE_NOTA)) {
             setTitle(TITULO_APPBAR_ALTERA);
             nota = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
-            posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
+            //posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
         } else {
             nota = new Nota();
         }
@@ -110,23 +109,24 @@ public class FormularioNotaActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(ehMenuSalvaNota(item)){
-            nota = criaNota();
+            preparaNota();
             retornaNota();
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void preparaNota() {
+        ColorDrawable background = (ColorDrawable) layout.getBackground();
+        nota.setCor(background.getColor());
+        nota.setDescricao(descricao.getText().toString());
+        nota.setTitulo(titulo.getText().toString());
+    }
+
     private void retornaNota() {
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
-        resultadoInsercao.putExtra(CHAVE_POSICAO, posicaoRecebida);
         setResult(Activity.RESULT_OK, resultadoInsercao);
-    }
-
-    private Nota criaNota() {
-        ColorDrawable background = (ColorDrawable) layout.getBackground();
-        return new Nota(titulo.getText().toString(), descricao.getText().toString(), background.getColor());
     }
 
     private boolean ehMenuSalvaNota(MenuItem item) {

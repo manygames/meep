@@ -1,37 +1,35 @@
 package br.com.manygames.meep.ui.activity.dao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
+
 import java.util.List;
 
 import br.com.manygames.meep.ui.activity.model.Nota;
 
-public class NotaDAO {
+@Dao
+public interface NotaDAO {
 
-    private final static ArrayList<Nota> notas = new ArrayList<>();
+    @Query("SELECT * FROM Nota")
+    List<Nota> todas();
 
-    public List<Nota> todos() {
-        return (List<Nota>) notas.clone();
-    }
+    @Insert
+    public long[] insere(Nota... notas);
 
-    public void insere(Nota... notas) {
-        NotaDAO.notas.addAll(Arrays.asList(notas));
-    }
+    @Update
+    public void altera(Nota... notas);
 
-    public void altera(int posicao, Nota nota) {
-        notas.set(posicao, nota);
-    }
+    @Delete
+    public void remove(Nota... notas);
 
-    public void remove(int posicao) {
-        notas.remove(posicao);
-    }
-
-    public void troca(int posicaoInicio, int posicaoFim) {
-        Collections.swap(notas, posicaoInicio, posicaoFim);
-    }
-
-    public void removeTodos() {
-        notas.clear();
-    }
+    @Query("UPDATE Nota SET posicao = " +
+            "CASE " +
+                "WHEN posicao = :posicaoInicio THEN :posicaoFim " +
+                "WHEN posicao = :posicaoFim    THEN :posicaoInicio " +
+            "END " +
+            "WHERE posicao IN (:posicaoInicio, :posicaoFim)")
+    public void troca(int posicaoInicio, int posicaoFim);
 }

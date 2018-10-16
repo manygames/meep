@@ -1,6 +1,7 @@
 package br.com.manygames.meep.ui.activity;
 
 import android.app.Activity;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import br.com.manygames.meep.R;
 import br.com.manygames.meep.preferences.Layouts;
 import br.com.manygames.meep.preferences.NotasPreferences;
 import br.com.manygames.meep.ui.activity.dao.NotaDAO;
+import br.com.manygames.meep.ui.activity.dao.NotaDatabase;
+import br.com.manygames.meep.ui.activity.dao.OldNotaDAO;
 import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
@@ -41,31 +44,27 @@ public class ListaNotasActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private Layouts layoutAtual = LINEAR;
     private NotasPreferences preferences;
-    private Layouts proximoLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(TITULO_APPBAR);
+        setContentView(R.layout.activity_lista_notas);
+
         preferences = new NotasPreferences(this);
 
-        setContentView(R.layout.activity_lista_notas);
+/*        NotaDAO dao = NotaDatabase.getNotaDatabase(this).notaDAO();
+        long[] idsCriados = dao.insere(new Nota[]{
+                new Nota("Weber", "2", Color.WHITE, 0),
+                new Nota("Heitor", "3", Color.WHITE, 1),
+                new Nota("Joice", "5", Color.WHITE, 2)});
+
+        for(int i = 0; i < todasNotas.size(); i++){
+            todasNotas.get(i).setId(idsCriados[i]);
+        }*/
+
         List<Nota> todasNotas = pegaTodasNotas();
-        todasNotas.add(new Nota("1","2", Color.WHITE));
-        todasNotas.add(new Nota("2","3", Color.WHITE));
-        todasNotas.add(new Nota("4","5", Color.WHITE));
-//        todasNotas.add(new Nota("3","4"));
-//        todasNotas.add(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
-//        todasNotas.add(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
-//        todasNotas.add(new Nota("10","11"));
-        NotaDAO dao = new NotaDAO();
-        dao.insere(new Nota("1","2", Color.WHITE));
-        dao.insere(new Nota("2","3", Color.WHITE));
-        dao.insere(new Nota("4","5", Color.WHITE));
-//        dao.insere(new Nota("3","4"));
-//        dao.insere(new Nota("5","Oi, eu sou o Heitor, filho do Weber"));
-//        dao.insere(new Nota("7","Eu tenho o melhor pai do mundo! rsrsrsrsrsrsrsrsrsrsrsrsrsrsrs"));
-//        dao.insere(new Nota("10","11"));
         configuraRecyclerView(todasNotas);
         configuraInsereNota();
     }
@@ -86,8 +85,8 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private List<Nota> pegaTodasNotas() {
-        NotaDAO dao = new NotaDAO();
-        return dao.todos();
+        NotaDAO dao = NotaDatabase.getNotaDatabase(this).notaDAO();
+        return dao.todas();
     }
 
     @Override
@@ -96,7 +95,6 @@ public class ListaNotasActivity extends AppCompatActivity {
         if (ehUmResultadoInsereNota(requestCode, data)) {
             if (resultadoOk(resultCode)) {
                 Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-                //Toast.makeText(this, notaRecebida.getCor(), Toast.LENGTH_LONG).show();
                 adiciona(notaRecebida);
             }
         }
@@ -104,10 +102,8 @@ public class ListaNotasActivity extends AppCompatActivity {
         if (ehResultadoAlteraNota(requestCode, data)) {
             if (resultadoOk(resultCode)) {
                 Nota notaAlterada = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-                int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-                if (ehPosicaoValida(posicaoRecebida)) {
-                    //Toast.makeText(this, "" + notaAlterada.getCor(), Toast.LENGTH_LONG).show();
-                    altera(notaAlterada, posicaoRecebida);
+                if (ehPosicaoValida(notaAlterada.getPosicao())) {
+                    altera(notaAlterada);
                 } else {
                     Toast.makeText(this, "Ocorreu um problema na alteração da nota", Toast.LENGTH_LONG).show();
                 }
@@ -116,9 +112,9 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void altera(Nota nota, int posicao) {
-        new NotaDAO().altera(posicao, nota);
-        adapter.altera(posicao, nota);
+    private void altera(Nota nota) {
+        NotaDatabase.getNotaDatabase(this).notaDAO().altera(nota);
+        adapter.altera(nota);
     }
 
     private boolean ehPosicaoValida(int posicaoRecebida) {
@@ -134,7 +130,8 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private void adiciona(Nota notaRecebida) {
-        new NotaDAO().insere(notaRecebida);
+        long[] idsCriados = NotaDatabase.getNotaDatabase(this).notaDAO().insere(notaRecebida);
+        notaRecebida.setId(idsCriados[0]);
         adapter.adiciona(notaRecebida);
     }
 
@@ -158,11 +155,10 @@ public class ListaNotasActivity extends AppCompatActivity {
         listaNotas = findViewById(R.id.lista_notas_recycler_view);
         configuraAdapter(todasNotas, listaNotas);
         configuraItemTouchHelper(listaNotas);
-        //Não é necessário porque foi definido no XML
     }
 
     private void configuraItemTouchHelper(RecyclerView listaNotas) {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(this, adapter));
         itemTouchHelper.attachToRecyclerView(listaNotas);
     }
 

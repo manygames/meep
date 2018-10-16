@@ -1,17 +1,21 @@
 package br.com.manygames.meep.ui.recyclerview.helper.callback;
 
-import android.content.ClipData;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import br.com.manygames.meep.ui.activity.dao.NotaDAO;
+import br.com.manygames.meep.ui.activity.dao.NotaDatabase;
+import br.com.manygames.meep.ui.activity.dao.OldNotaDAO;
+import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaNotasAdapter;
 
 public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
+    private Context context;
     private final ListaNotasAdapter adapter;
 
-    public NotaItemTouchHelperCallback(ListaNotasAdapter adapter) {
+    public NotaItemTouchHelperCallback(Context context, ListaNotasAdapter adapter) {
+        this.context = context;
         this.adapter = adapter;
     }
 
@@ -24,25 +28,25 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        int posicaoFinal = target.getAdapterPosition();
         int posicaoInicial = viewHolder.getAdapterPosition();
+        int posicaoFinal = target.getAdapterPosition();
         trocaNotas(posicaoInicial, posicaoFinal);
         return true;
     }
 
     private void trocaNotas(int posicaoInicial, int posicaoFinal) {
-        new NotaDAO().troca(posicaoInicial, posicaoFinal);
+        new OldNotaDAO().troca(posicaoInicial, posicaoFinal);
         adapter.troca(posicaoInicial, posicaoFinal);
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        int posicao = viewHolder.getAdapterPosition();
-        removeNota(posicao);
+        Nota nota = adapter.pegaNota(viewHolder.getAdapterPosition());
+        removeNota(nota);
     }
 
-    private void removeNota(int posicao) {
-        new NotaDAO().remove(posicao);
-        adapter.remove(posicao);
+    private void removeNota(Nota nota) {
+        NotaDatabase.getNotaDatabase(context).notaDAO().remove(nota);
+        adapter.remove(nota.getPosicao());
     }
 }
