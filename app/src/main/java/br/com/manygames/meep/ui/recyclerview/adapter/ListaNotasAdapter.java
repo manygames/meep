@@ -3,7 +3,6 @@ package br.com.manygames.meep.ui.recyclerview.adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +13,14 @@ import java.util.List;
 
 import br.com.manygames.meep.R;
 import br.com.manygames.meep.ui.activity.model.Nota;
-import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.NotaViewHolder> {
+
+    public static final int PRIMEIRA_POSICAO_DA_LISTA = 0;
+
+    public interface OnItemClickListener {
+        void onItemClick(Nota nota);
+    }
 
     private final List<Nota> notas;
     private final Context context;
@@ -40,8 +44,6 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     @Override
     public void onBindViewHolder(ListaNotasAdapter.NotaViewHolder notaViewHolder, int position) {
         Nota nota = notas.get(position);
-        //atribui posicao atual, pois ao remover uma nota as posições são alteradas. AS POSIÇÕES NÃO SÂO ESTÁTICAS!
-        //nota.setPosicao(position);
         notaViewHolder.vincula(nota);
     }
 
@@ -58,7 +60,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
             }
         }
 
-        notas.add(0, nota);
+        notas.add(PRIMEIRA_POSICAO_DA_LISTA, nota);
         notifyDataSetChanged();
     }
 
@@ -137,7 +139,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClickListener.onItemClick(nota, getAdapterPosition());
+                    onItemClickListener.onItemClick(nota);
                 }
             });
         }

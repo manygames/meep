@@ -15,12 +15,6 @@ public class Nota implements Serializable {
     private int cor;
     private int posicao;
 
-    public Nota(String titulo, String descricao, int cor) {
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.cor = cor;
-    }
-
     public Nota() {
         this.titulo = "";
         this.descricao = "";

@@ -45,26 +45,14 @@ public class FormularioNotaActivity extends AppCompatActivity {
     }
 
     private void configuraAdapter() {
-        //inicio - criando seletor de cores
-
         RecyclerView listaCores = findViewById(R.id.formulario_nota_lista_cores);
 
-        ArrayList<Integer> cores = new ArrayList<Integer>();
-        cores.add(Color.GREEN);
-        cores.add(Color.WHITE);
-        cores.add(Color.RED);
-        cores.add(Color.BLUE);
-        cores.add(Color.YELLOW);
-        cores.add(Color.MAGENTA);
-        cores.add(Color.GRAY);
-        cores.add(Color.CYAN);
-
-        ListaCoresAdapter adapter = new ListaCoresAdapter(this, cores);
+        ListaCoresAdapter adapter = new ListaCoresAdapter(this);
         listaCores.setAdapter(adapter);
         adapter.setOnItemClickListener(new ListaCoresAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int cor, int position) {
-                setLayoutColor(cor);
+                alteraCorDaTela(cor);
                 nota.setCor(cor);
             }
         });
@@ -72,7 +60,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
         //fim
     }
 
-    private void setLayoutColor(int cor) {
+    private void alteraCorDaTela(int cor) {
         layout.setBackgroundColor(cor);
     }
 
@@ -88,7 +76,7 @@ public class FormularioNotaActivity extends AppCompatActivity {
     private void preencheCampos() {
         titulo.setText(nota.getTitulo());
         descricao.setText(nota.getDescricao());
-        setLayoutColor(nota.getCor());
+        alteraCorDaTela(nota.getCor());
     }
 
     private void inicializaCampos() {
@@ -113,6 +101,10 @@ public class FormularioNotaActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean ehMenuSalvaNota(MenuItem item) {
+        return R.id.menu_formulario_ic_salva == item.getItemId();
+    }
+
     private void preparaNota() {
         ColorDrawable background = (ColorDrawable) layout.getBackground();
         nota.setCor(background.getColor());
@@ -124,9 +116,5 @@ public class FormularioNotaActivity extends AppCompatActivity {
         Intent resultadoInsercao = new Intent();
         resultadoInsercao.putExtra(CHAVE_NOTA, nota);
         setResult(Activity.RESULT_OK, resultadoInsercao);
-    }
-
-    private boolean ehMenuSalvaNota(MenuItem item) {
-        return R.id.menu_formulario_ic_salva == item.getItemId();
     }
 }

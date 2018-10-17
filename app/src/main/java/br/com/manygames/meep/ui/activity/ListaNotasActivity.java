@@ -11,7 +11,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,14 +23,12 @@ import br.com.manygames.meep.ui.activity.dao.NotaDAO;
 import br.com.manygames.meep.ui.activity.dao.NotaDatabase;
 import br.com.manygames.meep.ui.activity.model.Nota;
 import br.com.manygames.meep.ui.recyclerview.adapter.ListaNotasAdapter;
-import br.com.manygames.meep.ui.recyclerview.adapter.listener.OnItemClickListener;
 import br.com.manygames.meep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
 
 import static br.com.manygames.meep.preferences.Layouts.LINEAR;
 import static br.com.manygames.meep.preferences.Layouts.STAGGEREDGRID;
 import static br.com.manygames.meep.preferences.Layouts.getEnum;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
-import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_ALTERA_NOTA;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.CODIGO_REQUISICAO_INSERE_NOTA;
 import static br.com.manygames.meep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
@@ -156,26 +153,18 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraAdapter(List<Nota> todasNotas, final RecyclerView listaNotas) {
         adapter = new ListaNotasAdapter(this, todasNotas);
 
-        listaNotas.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                //NotaDatabase.getNotaDatabase(ListaNotasActivity.this).notaDAO().altera(adapter.pegaNotas());
-            }
-        });
-
         listaNotas.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClickListener() {
+        adapter.setOnItemClickListener(new ListaNotasAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(Nota nota, int posicao) {
-                vaiParaFormNotaActivityAltera(nota, posicao);
+            public void onItemClick(Nota nota) {
+                vaiParaFormNotaActivityAltera(nota);
             }
         });
     }
 
-    private void vaiParaFormNotaActivityAltera(Nota nota, int posicao) {
+    private void vaiParaFormNotaActivityAltera(Nota nota) {
         Intent editaFormulario = new Intent(ListaNotasActivity.this, FormularioNotaActivity.class);
         editaFormulario.putExtra(CHAVE_NOTA, nota);
-        editaFormulario.putExtra(CHAVE_POSICAO, posicao);
         startActivityForResult(editaFormulario, CODIGO_REQUISICAO_ALTERA_NOTA);
     }
 

@@ -1,7 +1,7 @@
 package br.com.manygames.meep.ui.recyclerview.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,9 +27,25 @@ public class ListaCoresAdapter extends RecyclerView.Adapter<ListaCoresAdapter.Co
         this.onItemClickListener = onItemClickListener;
     }
 
-    public ListaCoresAdapter(Context context, ArrayList<Integer> cores) {
-        this.cores = cores;
+    public ListaCoresAdapter(Context context) {
+        this.cores = criaListaDeCores();
         this.context = context;
+    }
+
+    private ArrayList<Integer> criaListaDeCores() {
+        ArrayList<Integer> cores = new ArrayList();
+        cores.add(Color.GREEN);
+        cores.add(Color.WHITE);
+        cores.add(Color.RED);
+        cores.add(Color.BLUE);
+        cores.add(Color.YELLOW);
+        cores.add(Color.MAGENTA);
+        cores.add(Color.GRAY);
+        cores.add(Color.CYAN);
+        cores.add(Color.parseColor("#F1CBFF"));
+        cores.add(Color.parseColor("#A47C48"));
+        cores.add(Color.parseColor("#BE29EC"));
+        return cores;
     }
 
     @Override
@@ -41,7 +57,6 @@ public class ListaCoresAdapter extends RecyclerView.Adapter<ListaCoresAdapter.Co
     @Override
     public void onBindViewHolder(ListaCoresAdapter.CorViewHolder holder, int position) {
         int cor = cores.get(position);
-        //String cor = Cor.pegaHash(position);
         holder.vincula(cor);
     }
 

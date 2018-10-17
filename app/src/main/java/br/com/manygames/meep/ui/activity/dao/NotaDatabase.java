@@ -14,7 +14,6 @@ public abstract class NotaDatabase extends RoomDatabase{
 
     public abstract NotaDAO notaDAO();
 
-    //Database
     private static final String DATABASE_NAME = "Nota";
 
     public static NotaDatabase getNotaDatabase(Context context){
