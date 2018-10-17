@@ -3,7 +3,6 @@
 <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_cor_circulo"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -11,6 +10,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/circulo"
-        tools:background="@drawable/circulo"
-        />
+        android:background="@drawable/circulo"/>

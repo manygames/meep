@@ -1,9 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.FeedbackActivity">
+    android:layout_width="match_parent">
 
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/feedback_banner"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:src="@drawable/feedback_banner"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Deixe o seu feedback! :)"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:background="@android:drawable/screen_background_dark_transparent"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/feedback_banner"
+        app:layout_constraintEnd_toEndOf="@id/feedback_banner"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/feedback_banner"
+        app:layout_constraintTop_toTopOf="@id/feedback_banner"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/feedback_email_input_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feedback_banner">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/feedback_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/feedback_mensagem_input_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/feedback_email_input_layout"
+        app:layout_constraintStart_toStartOf="@id/feedback_email_input_layout"
+        app:layout_constraintTop_toBottomOf="@+id/feedback_email_input_layout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/feedback_mensagem_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Escreva seu Feedback"
+            android:inputType="textMultiLine"
+            android:maxLines="3"/>
+
+        <TextView
+            android:id="@+id/feedback_instrucoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:maxLines="3"
+            android:text="@string/feedback_instrucoes"
+            android:textSize="14sp"/>
+    </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

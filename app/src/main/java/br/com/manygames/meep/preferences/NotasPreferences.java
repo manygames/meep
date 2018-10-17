@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 public class NotasPreferences {
     public static final String LAYOUT_ATUAL = "layoutAtual";
-    public static final String PRIMEIRO_ACESSO = "ehPrimeiroAcesso";
     private Context context;
 
     public NotasPreferences(Context context){

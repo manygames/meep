@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,16 +52,6 @@ public class ListaNotasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_notas);
 
         preferences = new NotasPreferences(this);
-
-/*        NotaDAO dao = NotaDatabase.getNotaDatabase(this).notaDAO();
-        long[] idsCriados = dao.insere(new Nota[]{
-                new Nota("Weber", "2", Color.WHITE, 0),
-                new Nota("Heitor", "3", Color.WHITE, 1),
-                new Nota("Joice", "5", Color.WHITE, 2)});
-
-        for(int i = 0; i < todasNotas.size(); i++){
-            todasNotas.get(i).setId(idsCriados[i]);
-        }*/
 
         List<Nota> todasNotas = pegaTodasNotas();
         configuraRecyclerView(todasNotas);
@@ -190,10 +179,51 @@ public class ListaNotasActivity extends AppCompatActivity {
         startActivityForResult(editaFormulario, CODIGO_REQUISICAO_ALTERA_NOTA);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_lista_notas_muda_layout, menu);
+        getMenuInflater().inflate(R.menu.menu_lista_notas_actions, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.menu_lista_notas_muda_layout:
+                trocaLayout(item);
+                configuraLayoutManager();
+                break;
+            case R.id.menu_lista_notas_feedback:
+                Intent intent = new Intent(ListaNotasActivity.this, FeedbackActivity.class);
+                startActivity(intent);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void trocaLayout(MenuItem item) {
+        switch (layoutAtual) {
+            case LINEAR:
+                mudaParaStaggeredGrid(item);
+                break;
+            case STAGGEREDGRID:
+                mudaParaLinear(item);
+                break;
+        }
+    }
+
+    private void mudaParaLinear(MenuItem item) {
+        alteraIconePara(item, R.drawable.ic_action_botao_staggeredgrid);
+        layoutManager = new LinearLayoutManager(this);
+        layoutAtual = LINEAR;
+    }
+
+    private void mudaParaStaggeredGrid(MenuItem item) {
+        alteraIconePara(item, R.drawable.ic_action_botao_linear);
+        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutAtual = STAGGEREDGRID;
     }
 
     private void configuraLayoutManager() {
@@ -201,26 +231,8 @@ public class ListaNotasActivity extends AppCompatActivity {
         adapter.notificaTrocaDeLayout(0, adapter.quantidadeNotas() - 1);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        trocaLayout(item);
-        configuraLayoutManager();
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void trocaLayout(MenuItem item) {
-        switch (layoutAtual) {
-            case LINEAR:
-                item.setIcon(R.drawable.ic_action_botao_alterna_linear);
-                layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                layoutAtual = STAGGEREDGRID;
-                break;
-            case STAGGEREDGRID:
-                item.setIcon(R.drawable.ic_action_botao_alterna_staggeredgrid);
-                layoutManager = new LinearLayoutManager(this);
-                layoutAtual = LINEAR;
-                break;
-        }
+    private void alteraIconePara(MenuItem item, int novoIcone){
+        item.setIcon(novoIcone);
     }
 
     @Override
@@ -232,14 +244,14 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private void carregaUltimoLayoutSalvo(Menu menu) {
         layoutAtual = getEnum(preferences.pegaLayout() - 1);
-        MenuItem item = menu.findItem(R.id.menu_lista_notas_layouts);
+        MenuItem item = menu.findItem(R.id.menu_lista_notas_muda_layout);
         switch (layoutAtual) {
             case LINEAR:
-                item.setIcon(R.drawable.ic_action_botao_alterna_staggeredgrid);
+                item.setIcon(R.drawable.ic_action_botao_staggeredgrid);
                 layoutManager = new LinearLayoutManager(this);
                 break;
             case STAGGEREDGRID:
-                item.setIcon(R.drawable.ic_action_botao_alterna_linear);
+                item.setIcon(R.drawable.ic_action_botao_linear);
                 layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 break;
         }
@@ -249,23 +261,5 @@ public class ListaNotasActivity extends AppCompatActivity {
     protected void onDestroy() {
         preferences.salvaLayout(layoutAtual);
         super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        List<Nota> notasB = NotaDatabase.getNotaDatabase(this).notaDAO().todas();
-
-        for (Nota nota:
-                notasB) {
-            Log.d("Notas no banco", nota.getTitulo() + " - " + nota.getId() + " - " + nota.getPosicao());
-        }
-
-        Nota[] notas = adapter.pegaNotas();
-        for (Nota nota:
-                notas) {
-            Log.d("Notas no adapter", nota.getTitulo() + " - " + nota.getId() + " - " + nota.getPosicao());
-        }
     }
 }
