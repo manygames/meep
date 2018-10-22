@@ -64,8 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Escreva seu Feedback"
-            android:inputType="textMultiLine"
-            android:maxLines="3"/>
+            android:inputType="textMultiLine"/>
 
         <TextView
             android:id="@+id/feedback_instrucoes"

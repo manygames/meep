@@ -2,7 +2,6 @@ package br.com.manygames.meep.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import br.com.manygames.meep.R;
 import br.com.manygames.meep.ui.activity.model.Nota;
